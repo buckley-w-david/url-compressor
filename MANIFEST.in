@@ -1,1 +1,1 @@
-include url_compressor/urls.codec
+include url_compressor/*.codec

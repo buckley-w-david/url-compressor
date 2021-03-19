@@ -14,16 +14,13 @@ def index():
     form = CompressorForm(request.form)
     return render_template('index.html', form=form)
 
-from dahuffman import HuffmanCodec
-import base64
-
 def compress(url):
     c = codec.get_codec()
-    return base64.urlsafe_b64encode(c.encode(url)).decode('utf-8')
+    return c.encode_url(url)
 
 def decompress(slug):
     c = codec.get_codec()
-    return c.decode(base64.urlsafe_b64decode(slug))
+    return c.decode_slug(slug)
 
 from http import HTTPStatus
 @bp.route('/generate', methods=['POST'])
@@ -32,7 +29,7 @@ def generate(slug=None):
     if form.validate():
         return compress(form.url.data)
     else:
-        return 'You suck!', HTTPStatus.BAD_REQUEST
+        return 'Bad Request', HTTPStatus.BAD_REQUEST
 
 @bp.route('/<slug>')
 def lookup(slug=None):
@@ -40,4 +37,4 @@ def lookup(slug=None):
         url = decompress(slug)
         return redirect(url)
     except:
-        return 'You suck!', HTTPStatus.NOT_FOUND
+        return 'Not Found', HTTPStatus.NOT_FOUND
